@@ -1,27 +1,28 @@
+# main.py
 import time
 from camera import Camera
 from object import Cube
 from input_handler import get_key
-from draw import draw_cube
-from light import Light, Sun
+from renderer import BasicRenderer, GradientLightingRenderer
 
 def main():
     angle_x, angle_y = 0, 0
     camera_distance = 2.5
-    cube_size = 1.0  # Размер куба
+    cube_size = 1.0
     camera = Camera(distance=camera_distance)
     cube = Cube()
-    # Создание источников света
-    # point_light = Light(position=(0, 0, 1), intensity=1.0)
-    sun = Sun(direction=(1, -1, -1), intensity=0.5)
+
+    # Инициализация рендерера
+    current_renderer = BasicRenderer()  # Начинаем с базового рендерера
 
     while True:
-        # Здесь можно изменить размер куба, если вы добавите соответствующий метод в класс Cube
+        # Изменяем размер куба
         cube.vertices = [[x * cube_size for x in vertex] for vertex in cube.vertices]
-
         cube_vertices = cube.rotate(angle_x, angle_y)
         projected = camera.project(cube_vertices)
-        draw_cube(projected)
+
+        # Рендеринг с использованием текущего рендерера
+        current_renderer.render(projected)
 
         angle_x += 0.025
         angle_y += 0.025
@@ -30,6 +31,10 @@ def main():
         command = get_key()
         if command == 'q':  # Выход из программы при нажатии 'q'
             break
+        elif command == '1':  # Переключение на базовый рендерер
+            current_renderer = BasicRenderer()
+        elif command == '2':  # Переключение на новый рендерер
+            current_renderer = GradientLightingRenderer()
         elif command == 'w':  # Увеличение размера куба
             cube_size += 0.1
         elif command == 's':  # Уменьшение размера куба
