@@ -4,6 +4,7 @@ from camera import Camera
 from object import Cube
 from input_handler import get_key
 from renderer import BasicRenderer, GradientLightingRenderer
+from light import LightManager, Sun, Light
 
 def main():
     angle_x, angle_y = 0, 0
@@ -11,6 +12,10 @@ def main():
     cube_size = 1.0
     camera = Camera(distance=camera_distance)
     cube = Cube()
+
+    light_manager = LightManager()
+    light_manager.add_light(Sun(direction=(1, -1, 1), intensity=1))
+    # light_manager.add_light(Sun(direction=(-1, -1, 1), intensity=0.5))  # Пример второго источника света
 
     # Инициализация рендерера
     current_renderer = BasicRenderer()  # Начинаем с базового рендерера
@@ -34,7 +39,7 @@ def main():
         elif command == '1':  # Переключение на базовый рендерер
             current_renderer = BasicRenderer()
         elif command == '2':  # Переключение на новый рендерер
-            current_renderer = GradientLightingRenderer()
+            current_renderer = GradientLightingRenderer(light_manager)
         elif command == 'w':  # Увеличение размера куба
             cube_size += 0.1
         elif command == 's':  # Уменьшение размера куба
@@ -45,7 +50,7 @@ def main():
         elif command == 'd':  # Уменьшение расстояния камеры
             camera_distance = max(0.1, camera_distance - 0.1)  # Минимальное расстояние камеры - 0.1
 
-        time.sleep(0.05)
+        # time.sleep(0.01)
 
 if __name__ == "__main__":
     main()
